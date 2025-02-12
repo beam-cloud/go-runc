@@ -131,7 +131,6 @@ type CreateOpts struct {
 	IO
 	// PidFile is a path to where a pid file should be created
 	PidFile       string
-	ConfigPath    string
 	OutputWriter  io.Writer
 	ConsoleSocket ConsoleSocket
 	Detach        bool
@@ -167,9 +166,6 @@ func (o *CreateOpts) args() (out []string, err error) {
 	}
 	if len(o.ExtraArgs) > 0 {
 		out = append(out, o.ExtraArgs...)
-	}
-	if o.ConfigPath != "" {
-		out = append(out, "--config", o.ConfigPath)
 	}
 	return out, nil
 }
