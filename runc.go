@@ -635,6 +635,8 @@ func (r *Runc) Checkpoint(context context.Context, id string, opts *CheckpointOp
 	}
 	cmd := r.command(context, append(args, id)...)
 	cmd.ExtraFiles = extraFiles
+	fmt.Println("cmd", cmd.Args)
+	fmt.Println("string", cmd.String())
 	return r.runOrError(cmd)
 }
 
