@@ -131,7 +131,6 @@ type CreateOpts struct {
 	IO
 	// PidFile is a path to where a pid file should be created
 	PidFile       string
-	ConfigPath    string
 	OutputWriter  io.Writer
 	ConsoleSocket ConsoleSocket
 	Detach        bool
@@ -167,9 +166,6 @@ func (o *CreateOpts) args() (out []string, err error) {
 	}
 	if len(o.ExtraArgs) > 0 {
 		out = append(out, o.ExtraArgs...)
-	}
-	if o.ConfigPath != "" {
-		out = append(out, "--config", o.ConfigPath)
 	}
 	return out, nil
 }
@@ -539,8 +535,11 @@ type CheckpointOpts struct {
 	// LazyPages uses userfaultfd to lazily restore memory pages
 	LazyPages bool
 	// StatusFile is the file criu writes \0 to once lazy-pages is ready
-	StatusFile *os.File
-	ExtraArgs  []string
+	SkipInFlight bool
+	LeaveRunning bool
+	LinkRemap    bool
+	StatusFile   *os.File
+	ExtraArgs    []string
 }
 
 // CgroupMode defines the cgroup mode used for checkpointing
@@ -556,6 +555,18 @@ const (
 )
 
 func (o *CheckpointOpts) args() (out []string) {
+	if o.LeaveRunning {
+		out = append(out, "--leave-running")
+	}
+	if o.SkipInFlight {
+		out = append(out, "--tcp-skip-in-flight")
+	}
+	if o.LinkRemap {
+		out = append(out, "--link-remap")
+	}
+	if o.AllowOpenTCP {
+		out = append(out, "--tcp-established")
+	}
 	if o.ImagePath != "" {
 		out = append(out, "--image-path", o.ImagePath)
 	}
@@ -564,9 +575,6 @@ func (o *CheckpointOpts) args() (out []string) {
 	}
 	if o.ParentPath != "" {
 		out = append(out, "--parent-path", o.ParentPath)
-	}
-	if o.AllowOpenTCP {
-		out = append(out, "--tcp-established")
 	}
 	if o.AllowExternalUnixSockets {
 		out = append(out, "--ext-unix-sk")
