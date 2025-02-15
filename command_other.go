@@ -25,11 +25,16 @@ import (
 )
 
 func (r *Runc) command(context context.Context, args ...string) *exec.Cmd {
+	var cmd *exec.Cmd
 	command := r.Command
-	if command == "" {
+	if r.Debug {
+		command = "strace"
+		args = append([]string{"-f", "-o", "/tmp/runc.strace", "runc"}, append(r.args(), args...)...)
+		cmd = exec.CommandContext(context, command, args...)
+	} else if command == "" {
 		command = DefaultCommand
+		cmd = exec.CommandContext(context, command, append(r.args(), args...)...)
 	}
-	cmd := exec.CommandContext(context, command, append(r.args(), args...)...)
 	cmd.Env = os.Environ()
 	return cmd
 }
