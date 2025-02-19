@@ -540,6 +540,7 @@ type CheckpointOpts struct {
 	LinkRemap    bool
 	StatusFile   *os.File
 	ExtraArgs    []string
+	OutputWriter io.Writer
 }
 
 // CgroupMode defines the cgroup mode used for checkpointing
@@ -635,6 +636,12 @@ func (r *Runc) Checkpoint(context context.Context, id string, opts *CheckpointOp
 	}
 	cmd := r.command(context, append(args, id)...)
 	cmd.ExtraFiles = extraFiles
+	fmt.Println("cmd", cmd.Args)
+	fmt.Println("string", cmd.String())
+	if opts.OutputWriter != nil {
+		cmd.Stdout = opts.OutputWriter
+		cmd.Stderr = opts.OutputWriter
+	}
 	return r.runOrError(cmd)
 }
 
@@ -692,6 +699,10 @@ func (r *Runc) Restore(context context.Context, id, bundle string, opts *Restore
 	cmd := r.command(context, append(args, id)...)
 	if opts != nil && opts.IO != nil {
 		opts.Set(cmd)
+	}
+	if opts.OutputWriter != nil {
+		cmd.Stdout = opts.OutputWriter
+		cmd.Stderr = opts.OutputWriter
 	}
 	ec, err := r.startCommand(cmd)
 	if err != nil {
