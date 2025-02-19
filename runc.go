@@ -650,6 +650,7 @@ type RestoreOpts struct {
 	CheckpointOpts
 	IO
 
+	Started       chan<- int
 	Detach        bool
 	PidFile       string
 	NoSubreaper   bool
@@ -714,6 +715,9 @@ func (r *Runc) Restore(context context.Context, id, bundle string, opts *Restore
 				return -1, err
 			}
 		}
+	}
+	if opts.Started != nil {
+		opts.Started <- cmd.Process.Pid
 	}
 	status, err := Monitor.Wait(cmd, ec)
 	if err == nil && status != 0 {
