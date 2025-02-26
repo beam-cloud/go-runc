@@ -263,9 +263,6 @@ func (r *Runc) Exec(context context.Context, id string, spec specs.Process, opts
 	if opts == nil {
 		opts = &ExecOpts{}
 	}
-	if opts.Started != nil {
-		defer close(opts.Started)
-	}
 	f, err := os.CreateTemp(os.Getenv("XDG_RUNTIME_DIR"), "runc-process")
 	if err != nil {
 		return err
@@ -324,9 +321,6 @@ func (r *Runc) Exec(context context.Context, id string, spec specs.Process, opts
 func (r *Runc) Run(context context.Context, id, bundle string, opts *CreateOpts) (int, error) {
 	if opts == nil {
 		opts = &CreateOpts{}
-	}
-	if opts.Started != nil {
-		defer close(opts.Started)
 	}
 	args := []string{"run", "--bundle", bundle}
 	oargs, err := opts.args()
