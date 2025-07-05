@@ -448,17 +448,17 @@ func (r *Runc) Events(context context.Context, id string, interval time.Duration
 			Monitor.Wait(cmd, ec)
 		}()
 		for {
-			var e Event
-			if err := dec.Decode(&e); err != nil {
+			e := &Event{}
+			if err := dec.Decode(e); err != nil {
 				if err == io.EOF {
 					return
 				}
-				e = Event{
+				e = &Event{
 					Type: "error",
 					Err:  err,
 				}
 			}
-			c <- &e
+			c <- e
 		}
 	}()
 	return c, nil
