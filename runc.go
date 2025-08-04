@@ -458,6 +458,7 @@ func (r *Runc) Events(context context.Context, id string, interval time.Duration
 					Err:  err,
 				}
 			}
+
 			c <- e
 		}
 	}()
@@ -547,6 +548,8 @@ const (
 	Full CgroupMode = "full"
 	// Strict is the "strict" cgroup mode
 	Strict CgroupMode = "strict"
+	// Ignore is the "ignore" cgroup mode
+	Ignore CgroupMode = "ignore"
 )
 
 func (o *CheckpointOpts) args() (out []string) {
