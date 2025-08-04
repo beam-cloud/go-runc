@@ -550,6 +550,8 @@ const (
 	Strict CgroupMode = "strict"
 	// Ignore is the "ignore" cgroup mode
 	Ignore CgroupMode = "ignore"
+	// None is the "none" cgroup mode
+	None CgroupMode = "none"
 )
 
 func (o *CheckpointOpts) args() (out []string) {
@@ -587,7 +589,7 @@ func (o *CheckpointOpts) args() (out []string) {
 		out = append(out, "--file-locks")
 	}
 	if string(o.Cgroups) != "" {
-		out = append(out, "--manage-cgroups-mode", string(o.Cgroups))
+		out = append(out, "--manage-cgroups", string(o.Cgroups))
 	}
 	for _, ns := range o.EmptyNamespaces {
 		out = append(out, "--empty-ns", ns)
