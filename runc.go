@@ -589,7 +589,7 @@ func (o *CheckpointOpts) args() (out []string) {
 		out = append(out, "--file-locks")
 	}
 	if string(o.Cgroups) != "" {
-		out = append(out, "--manage-cgroups", string(o.Cgroups))
+		out = append(out, "--manage-cgroups-mode", string(o.Cgroups))
 	}
 	for _, ns := range o.EmptyNamespaces {
 		out = append(out, "--empty-ns", ns)
