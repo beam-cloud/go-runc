@@ -717,6 +717,9 @@ func (r *Runc) Restore(context context.Context, id, bundle string, opts *Restore
 		opts.Started <- cmd.Process.Pid
 	}
 	status, err := Monitor.Wait(cmd, ec)
+	log.Println("status", status)
+	log.Println("ERROR FROM MONITOR err", err)
+	
 	if err == nil && status != 0 {
 		err = fmt.Errorf("%s did not terminate successfully: %w", cmd.Args[0], &ExitError{status})
 	}
