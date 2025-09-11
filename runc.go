@@ -514,8 +514,6 @@ type CheckpointOpts struct {
 	ParentPath string
 	// AllowOpenTCP allows open tcp connections to be checkpointed
 	AllowOpenTCP bool
-	// TCPClose forces open tcp connections to be closed before checkpointing
-	TCPClose     bool
 	// AllowExternalUnixSockets allows external unix sockets to be checkpointed
 	AllowExternalUnixSockets bool
 	// AllowTerminal allows the terminal(pty) to be checkpointed with a container
@@ -562,9 +560,6 @@ func (o *CheckpointOpts) args() (out []string) {
 	}
 	if o.SkipInFlight {
 		out = append(out, "--tcp-skip-in-flight")
-	}
-	if o.TCPClose {
-		out = append(out, "--tcp-close")
 	}
 	if o.LinkRemap {
 		out = append(out, "--link-remap")
@@ -652,6 +647,7 @@ type RestoreOpts struct {
 	CheckpointOpts
 	IO
 
+	TCPClose    bool
 	Started       chan<- int
 	Detach        bool
 	PidFile       string
@@ -681,6 +677,9 @@ func (o *RestoreOpts) args() ([]string, error) {
 	}
 	if o.NoSubreaper {
 		out = append(out, "-no-subreaper")
+	}
+	if o.TCPClose {
+		out = append(out, "--tcp-close")
 	}
 	if len(o.ExtraArgs) > 0 {
 		out = append(out, o.ExtraArgs...)
